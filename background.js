@@ -14,16 +14,33 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 
   await chrome.scripting.executeScript({
     target: { tabId: tab.id },
+    world: "MAIN",
     func: (replacement) => {
+      // 1) Is the selection inside an input/textarea?
       const sel = window.getSelection();
-      if (!sel.rangeCount) return;
-      const range = sel.getRangeAt(0);
-      // remove the old selection…
-      range.deleteContents();
-      // …and insert the new text node
-      range.insertNode(document.createTextNode(replacement));
-      // collapse to the end so the cursor moves after the inserted text
-      sel.collapseToEnd();
+      const node = sel.anchorNode;
+      if (node && node.nodeType === Node.TEXT_NODE &&
+          node.parentElement.matches("input, textarea")) {
+        // @ts-ignore
+        replaceSelectionInInput(node.parentElement, replacement);
+      } else {
+        // 2) Otherwise do the normal range delete/insert
+        if (!sel.rangeCount) return;
+        const range = sel.getRangeAt(0);
+        range.deleteContents();
+        range.insertNode(document.createTextNode(replacement));
+        sel.collapseToEnd();
+      }
+
+      // helper for inputs:
+      function replaceSelectionInInput(el, replacement) {
+        const start = el.selectionStart;
+        const end   = el.selectionEnd;
+        const val   = el.value;
+        el.value = val.slice(0, start) + replacement + val.slice(end);
+        const pos = start + replacement.length;
+        el.setSelectionRange(pos, pos);
+      }
     },
     args: [politeText]
   });
