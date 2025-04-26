@@ -1,7 +1,7 @@
 chrome.runtime.onInstalled.addListener(() => {
     chrome.contextMenus.create({
       id: "make-polite",
-      title: "Make More Polite with ChatGPT",
+      title: "Politer!",
       contexts: ["selection"]
     });
   });
