@@ -12,10 +12,19 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   const apiKey = "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";          // <-- quoted
   const politeText = await getPoliteVersion(info.selectionText, apiKey);
 
-  // inject a content-script function; alert runs in the page, not the service worker
-  chrome.scripting.executeScript({
+  await chrome.scripting.executeScript({
     target: { tabId: tab.id },
-    func: text => alert("Politer version:\n\n" + text),
+    func: (replacement) => {
+      const sel = window.getSelection();
+      if (!sel.rangeCount) return;
+      const range = sel.getRangeAt(0);
+      // remove the old selection…
+      range.deleteContents();
+      // …and insert the new text node
+      range.insertNode(document.createTextNode(replacement));
+      // collapse to the end so the cursor moves after the inserted text
+      sel.collapseToEnd();
+    },
     args: [politeText]
   });
 });
