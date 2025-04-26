@@ -1,0 +1,15 @@
+{
+    "name": "Shorthand - Make Text Polite",
+    "version": "1.0",
+    "description": "Right-click to make selected text more polite using ChatGPT.",
+    "manifest_version": 3,
+    "permissions": ["contextMenus", "scripting", "storage", "activeTab"],
+    "host_permissions": ["<all_urls>"],
+    "background": {
+      "service_worker": "background.js"
+    },
+    "action": {
+      "default_popup": "popup.html"
+    },
+    "options_page": "options.html"
+  }
