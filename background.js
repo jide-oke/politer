@@ -9,7 +9,7 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId !== "make-polite") return;
 
-  const apiKey = "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";          // <-- quoted
+  const apiKey = "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";
   const politeText = await getPoliteVersion(info.selectionText, apiKey);
 
   await chrome.scripting.executeScript({
@@ -18,6 +18,31 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     func: (textToCopy) => {
       navigator.clipboard.writeText(textToCopy).then(() => {
         console.log('Copied to clipboard successfully!');
+
+        // Create a checkmark popup
+        const checkmark = document.createElement('div');
+        checkmark.textContent = '✔️';
+        checkmark.style.position = 'fixed';
+        checkmark.style.top = '20px';
+        checkmark.style.right = '20px';
+        checkmark.style.fontSize = '36px';
+        checkmark.style.background = 'white';
+        checkmark.style.borderRadius = '50%';
+        checkmark.style.padding = '10px';
+        checkmark.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
+        checkmark.style.zIndex = 9999;
+        checkmark.style.transition = 'opacity 0.5s ease';
+
+        document.body.appendChild(checkmark);
+
+        // After 1.5 seconds, fade out and remove
+        setTimeout(() => {
+          checkmark.style.opacity = '0';
+          setTimeout(() => {
+            checkmark.remove();
+          }, 500);
+        }, 1500);
+
       }).catch(err => {
         console.error('Failed to copy text: ', err);
       });
