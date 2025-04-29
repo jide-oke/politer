@@ -64,11 +64,12 @@ async function getPoliteVersion(text, apiKey) {
       messages: [
         {
           role: "system",
-          content: "Avoid overly robotic or stiff phrasing. You are a professional writing assistant that rewrites user-provided text to be polite, encouraging, polished, clear, and customer-friendly. Always maintain a natural, professional tone with a touch of friendliness. Also remove the 'Certainly! Here's a more polished version:' or likewise header. Remove the [Your Name] Signature as well."
+          content: [ "You are a professional writing assistant. Rewrite user text to sound polite, empathetic, encouraging, and professional. Maintain a natural, conversational tone without sounding robotic or overly formal. Avoid generic phrases like “Certainly!” or “Here’s your text:” — just provide the rewritten version directly. Assume the user prefers clarity and subtle friendliness."]
         },
         { role: "user", content: prompt }
       ],
-      max_tokens: 200
+      max_tokens: 1000,
+      temperature: 0.5
     })
   });
 
